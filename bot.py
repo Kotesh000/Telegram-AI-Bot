@@ -9,7 +9,7 @@ from telegram.ext import (
 )
 from PIL import Image
 import io
-from serpapi import GoogleSearch # type: ignore
+from serpapi.google_search import GoogleSearch
 
 # Load environment variables
 load_dotenv()
