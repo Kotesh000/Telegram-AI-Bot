@@ -1,0 +1,6 @@
+python-telegram-bot==20.0
+pymongo
+python-dotenv
+requests
+pillow
+google-generativeai
