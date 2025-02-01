@@ -4,3 +4,4 @@ python-dotenv
 requests
 pillow
 google-generativeai
+serpapi
