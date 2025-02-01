@@ -9,14 +9,13 @@ from telegram.ext import (
 )
 from PIL import Image
 import io
-from serpapi.google_search import GoogleSearch
+from duckduckgo_search import DDGS
 
 # Load environment variables
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGODB_URI")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-SERPAPI_KEY = os.getenv("SERPAPI_KEY")  # For Web Search
 
 # MongoDB Setup
 client = MongoClient(MONGO_URI)
@@ -134,7 +133,7 @@ async def analyze_image(update: Update, context: CallbackContext):
     except Exception as e:
         await update.message.reply_text(f"⚠️ Error processing image: {str(e)}")
 
-# ✅ Web Search Function
+# ✅ Web Search Function (Using DuckDuckGo)
 async def web_search(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
 
@@ -147,24 +146,19 @@ async def web_search(update: Update, context: CallbackContext):
         await update.message.reply_text("❌ Please provide a search query! Example: /websearch AI news")
         return
 
-    params = {
-        "q": query,
-        "location": "India",
-        "hl": "en",
-        "gl": "in",
-        "api_key": SERPAPI_KEY
-    }
+    try:
+        results = list(DDGS().text(query, max_results=3))  # Get top 3 results
 
-    search = GoogleSearch(params)
-    results = search.get_dict()
+        if results:
+            response_text = "🌍 **Top Search Results:**\n\n"
+            for result in results:
+                response_text += f"🔹 {result['title']}\n🔗 {result['href']}\n\n"
+            await update.message.reply_text(response_text)
+        else:
+            await update.message.reply_text("❌ No results found. Try a different query.")
 
-    if "organic_results" in results:
-        response_text = "🌍 **Top Search Results:**\n\n"
-        for idx, result in enumerate(results["organic_results"][:3]):  # Get top 3 results
-            response_text += f"🔹 {result['title']}\n🔗 {result['link']}\n\n"
-        await update.message.reply_text(response_text)
-    else:
-        await update.message.reply_text("❌ No results found. Try a different query.")
+    except Exception as e:
+        await update.message.reply_text(f"⚠️ Error fetching search results: {str(e)}")
 
 # ✅ Create Bot Application
 app = Application.builder().token(TOKEN).build()
@@ -173,7 +167,7 @@ app = Application.builder().token(TOKEN).build()
 app.add_handler(CommandHandler("register", register))  # User Registration
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("help", help_command))  
-app.add_handler(CommandHandler("websearch", web_search))
+app.add_handler(CommandHandler("websearch", web_search))  # Updated Web Search
 app.add_handler(CommandHandler("chat", chat_with_ai))  
 app.add_handler(MessageHandler(filters.PHOTO, analyze_image))  
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat_with_ai))  
