@@ -26,7 +26,7 @@ chats = db['chat_history']
 # Configure Gemini AI
 genai.configure(api_key=GEMINI_API_KEY)
 
-# ✅ User Registration
+#  User Registration
 async def register(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
     user = users.find_one({"chat_id": chat_id})
@@ -37,11 +37,11 @@ async def register(update: Update, context: CallbackContext):
         users.insert_one({"chat_id": chat_id, "username": update.message.from_user.username})
         await update.message.reply_text("✅ Registration successful! You can now use the bot.")
 
-# ✅ Check if User is Registered
+#  Check if User is Registered
 def is_registered(chat_id):
     return users.find_one({"chat_id": chat_id}) is not None
 
-# ✅ Start Command
+#  Start Command
 async def start(update: Update, context: CallbackContext):
     await update.message.reply_text(
         "Welcome to AI Chatbot! 🤖\n"
@@ -49,7 +49,7 @@ async def start(update: Update, context: CallbackContext):
         "Type /help to see available commands."
     )
 
-# ✅ Help Command
+#  Help Command
 async def help_command(update: Update, context: CallbackContext):
     help_text = (
         "Here are the available commands:\n\n"
@@ -63,7 +63,7 @@ async def help_command(update: Update, context: CallbackContext):
     )
     await update.message.reply_text(help_text)
 
-# ✅ AI Chat Function
+#  AI Chat Function
 async def chat_with_ai(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
 
@@ -94,7 +94,7 @@ async def chat_with_ai(update: Update, context: CallbackContext):
     except Exception as e:
         await update.message.reply_text(f"⚠️ Error: {str(e)}")
 
-# ✅ Image Analysis
+#  Image Analysis
 async def analyze_image(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
 
@@ -133,7 +133,7 @@ async def analyze_image(update: Update, context: CallbackContext):
     except Exception as e:
         await update.message.reply_text(f"⚠️ Error processing image: {str(e)}")
 
-# ✅ Web Search Function (Using DuckDuckGo)
+#  Web Search Function (Using DuckDuckGo)
 async def web_search(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
 
@@ -160,10 +160,10 @@ async def web_search(update: Update, context: CallbackContext):
     except Exception as e:
         await update.message.reply_text(f"⚠️ Error fetching search results: {str(e)}")
 
-# ✅ Create Bot Application
+#  Create Bot Application
 app = Application.builder().token(TOKEN).build()
 
-# ✅ Add Handlers
+#  Add Handlers
 app.add_handler(CommandHandler("register", register))  # User Registration
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("help", help_command))  
