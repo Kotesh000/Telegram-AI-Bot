@@ -172,6 +172,6 @@ app.add_handler(CommandHandler("chat", chat_with_ai))
 app.add_handler(MessageHandler(filters.PHOTO, analyze_image))  
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat_with_ai))  
 
-# ✅ Run the Bot
+#  Run the Bot
 print("🤖 Bot is running...")
 app.run_polling()
